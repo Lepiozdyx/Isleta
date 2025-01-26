@@ -10,6 +10,7 @@ import SwiftUI
 struct PVPGameView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @EnvironmentObject var gameSession: GameSessionViewModel
+    @State private var shouldShowBattle = false
     
     var body: some View {
         ZStack {
@@ -19,40 +20,31 @@ struct PVPGameView: View {
                     .transition(.opacity)
                 
             case .battle:
-                BattlePhaseView()
-                    .transition(.opacity)
+                if shouldShowBattle {
+                    BattlePhaseView()
+                        .transition(.opacity)
+                } else {
+                    PVPGameStartView()
+                        .transition(.opacity)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                                withAnimation {
+                                    shouldShowBattle = true
+                                }
+                            }
+                        }
+                }
                 
             case .finished(let winnerId):
-                gameOverView(winnerId: winnerId)
+                let winner = winnerId == gameSession.player1.id ? gameSession.player1 : gameSession.player2
+                GameOverView(winner: winner)
                     .transition(.opacity)
             }
         }
         .animation(.easeInOut, value: gameSession.gameState)
-    }
-    
-    @ViewBuilder
-    private func gameOverView(winnerId: UUID) -> some View {
-        let winner = winnerId == gameSession.player1.id ? gameSession.player1 : gameSession.player2
-        
-        ZStack {
-            BackgoundView(name: .bg1, isBlur: true)
-            
-            VStack(spacing: 30) {
-                Text("Game Over!")
-                    .font(.largeTitle.bold())
-                    .foregroundStyle(.yellow)
-                
-                Text("\(winner.name) Wins!")
-                    .font(.title)
-                    .foregroundStyle(.yellow)
-                
-                Button {
-                    coordinator.navigateToMenu()
-                } label: {
-                    Image(.quadButton)
-                        .resizable()
-                        .frame(width: 80, height: 80)
-                }
+        .onChange(of: gameSession.gameState) { newValue in
+            if case .setup = newValue {
+                shouldShowBattle = false
             }
         }
     }

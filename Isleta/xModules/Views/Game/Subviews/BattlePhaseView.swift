@@ -31,8 +31,9 @@ struct BattlePhaseView: View {
                 
                 VStack {
                     Text("\(currentPlayer.name)'s Turn")
-                        .font(.title.bold())
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundStyle(.yellow)
+                        .shadow(color: .purple, radius: 1, x: 1, y: 1)
                         .padding(.top)
                     
                     if isLandscape {
@@ -72,6 +73,8 @@ struct BattlePhaseView: View {
                     }
                 } : nil
             )
+            .scaleEffect(currentPlayerId == gameSession.player2.id ? 1.05 : 0.95)
+            .animation(.spring(response: 0.3), value: currentPlayerId)
             
             // Player 2's board (always on right/bottom)
             BoardContainerView(
@@ -87,6 +90,8 @@ struct BattlePhaseView: View {
                     }
                 } : nil
             )
+            .scaleEffect(currentPlayerId == gameSession.player1.id ? 1.05 : 0.95)
+            .animation(.spring(response: 0.3), value: currentPlayerId)
         }
     }
 }

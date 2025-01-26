@@ -15,7 +15,7 @@ struct SetupPhaseView: View {
         if case .setup(let playerId) = gameSession.gameState {
             return playerId == gameSession.player1.id ? gameSession.player1 : gameSession.player2
         }
-        return gameSession.player1 // default, чтобы избежать crash
+        return gameSession.player1
     }
     
     private var playerName: String {
@@ -52,10 +52,11 @@ struct SetupPhaseView: View {
     }
     
     private var boardPreview: some View {
-        VStack {
+        VStack(spacing: 0) {
             Text("\(playerName), place your fleet")
-                .font(.system(size: 18, weight: .bold))
+                .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(.yellow)
+                .shadow(color: .purple, radius: 1, x: 1, y: 1)
             
             GameBoardView(
                 isActive: true,
@@ -65,51 +66,12 @@ struct SetupPhaseView: View {
                 mode: .setup
             )
         }
+        .padding()
     }
     
     private var setupControls: some View {
         HStack {
-            VStack(alignment: .trailing) {
-                HStack {
-                    ForEach(0..<5) { _ in
-                        Image(.large)
-                            .resizable()
-                            .frame(width: 30, height: 50)
-                    }
-                }
-                
-                HStack {
-                    ForEach(0..<4) { _ in
-                        Image(.medium)
-                            .resizable()
-                            .frame(width: 30, height: 45)
-                    }
-                }
-                
-                HStack {
-                    Text("x2")
-                        .foregroundStyle(.yellow)
-                        .font(.system(size: 20, weight: .bold))
-                    
-                    ForEach(0..<3) { _ in
-                        Image(.small)
-                            .resizable()
-                            .frame(width: 25, height: 45)
-                    }
-                }
-                
-                HStack {
-                    Text("x2")
-                        .foregroundStyle(.yellow)
-                        .font(.system(size: 20, weight: .bold))
-                    
-                    ForEach(0..<2) { _ in
-                        Image(.tiny)
-                            .resizable()
-                            .frame(width: 30, height: 45)
-                    }
-                }
-            }
+            legionsSetup
             .opacity(gameSession.currentSetup == nil ? 1 : 0.5)
             
             Spacer()
@@ -125,9 +87,9 @@ struct SetupPhaseView: View {
                     }
                     
                     Text("Generate")
-                        .font(.system(size: 18, weight: .bold))
+                        .font(.system(size: 17, weight: .bold))
                         .foregroundStyle(.yellow)
-                        .shadow(color: .black, radius: 1, x: 1, y: 1)
+                        .shadow(color: .purple, radius: 1, x: 1, y: 1)
                 }
                 
                 Button {
@@ -152,6 +114,50 @@ struct SetupPhaseView: View {
             }
         }
         .padding()
+    }
+    
+    private var legionsSetup: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                ForEach(0..<5) { _ in
+                    Image(.large)
+                        .resizable()
+                        .frame(width: 30, height: 50)
+                }
+            }
+            
+            HStack {
+                ForEach(0..<4) { _ in
+                    Image(.medium)
+                        .resizable()
+                        .frame(width: 30, height: 45)
+                }
+            }
+            
+            HStack {
+                ForEach(0..<3) { _ in
+                    Image(.small)
+                        .resizable()
+                        .frame(width: 25, height: 45)
+                }
+                Text("x2")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.yellow)
+                    .shadow(color: .purple, radius: 1, x: 1, y: 1)
+            }
+            
+            HStack {
+                ForEach(0..<2) { _ in
+                    Image(.tiny)
+                        .resizable()
+                        .frame(width: 30, height: 45)
+                }
+                Text("x2")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.yellow)
+                    .shadow(color: .purple, radius: 1, x: 1, y: 1)
+            }
+        }
     }
 }
 

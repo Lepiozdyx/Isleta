@@ -33,9 +33,19 @@ final class GameSessionViewModel: ObservableObject {
         self.currentSetup = nil
     }
     
+    func restart() {
+        let player1Id = UUID()
+        let player2Id = UUID()
+        
+        self.player1 = Player(id: player1Id, name: "Player 1")
+        self.player2 = Player(id: player2Id, name: "Player 2")
+        self.gameState = .setup(currentPlayer: player1Id)
+        self.availableSetups = PresetBoardSetups.setups
+        self.currentSetup = nil
+    }
+    
     func nextSetup() {
         let availableSetups = self.availableSetups.filter { setup in
-            // Сетап не должен быть выбран ни одним из игроков
             setup.id != player1.boardSetup?.id && setup.id != player2.boardSetup?.id
         }
         
@@ -90,14 +100,11 @@ final class GameSessionViewModel: ObservableObject {
             defendingPlayer = player1
         }
         
-        // Проверяем, не был ли уже сделан ход в эту клетку
         if attackingPlayer.hits.contains(position) || attackingPlayer.misses.contains(position) {
             return false
         }
         
-        // Проверяем попадание в легион
         if let _ = defendingPlayer.boardSetup?.legions.first(where: { $0.positions.contains(position) }) {
-            // Register hit
             var updatedPlayer = attackingPlayer
             updatedPlayer.hits.insert(position)
             
@@ -107,14 +114,12 @@ final class GameSessionViewModel: ObservableObject {
                 player2 = updatedPlayer
             }
             
-            // Проверяем условие победы
-            if checkForVictory(attackingPlayer: attackingPlayer, defendingPlayer: defendingPlayer) {
-                gameState = .finished(winner: attackingPlayer.id)
+            if checkForVictory(attackingPlayer: updatedPlayer, defendingPlayer: defendingPlayer) {
+                gameState = .finished(winner: updatedPlayer.id)
             } else {
                 gameState = .battle(currentPlayer: defendingPlayer.id)
             }
         } else {
-            // Register miss
             var updatedPlayer = attackingPlayer
             updatedPlayer.misses.insert(position)
             
@@ -133,15 +138,13 @@ final class GameSessionViewModel: ObservableObject {
     private func checkForVictory(attackingPlayer: Player, defendingPlayer: Player) -> Bool {
         guard let defenderSetup = defendingPlayer.boardSetup else { return false }
         
-        // Проверяем каждый легион
+        // Проходим по всем легионам и проверяем, попали ли по всем их позициям
         for legion in defenderSetup.legions {
-            // Если есть хотя бы одна позиция легиона, по которой не попали - легион жив
-            if !legion.positions.allSatisfy({ attackingPlayer.hits.contains($0) }) {
+            if !legion.positions.isSubset(of: attackingPlayer.hits) {
                 return false
             }
         }
         
-        // Если все позиции всех легионов поражены - победа
         return true
     }
 }

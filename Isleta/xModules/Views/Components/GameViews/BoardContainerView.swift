@@ -17,15 +17,22 @@ struct BoardContainerView: View {
     var onCellTap: ((Position) -> Void)?
     
     var body: some View {
-        VStack {
-            Text(title)
-                .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(isActive ? .yellow : .white)
-                .padding(8)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(isActive ? .yellow.opacity(0.2) : .gray.opacity(0.5))
-                )
+        VStack(spacing: 0) {
+            Image(.underlay)
+                .resizable()
+                .frame(width: 200, height: 50)
+                .overlay(alignment: .leading) {
+                    Image(.player1)
+                        .resizable()
+                        .scaledToFit()
+                        .offset(x: -40, y: 0)
+                }
+                .overlay {
+                    Text(title)
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.white)
+                        .shadow(color: .black, radius: 1, x: 1, y: 1)
+                }
             
             GameBoardView(
                 isActive: isActive,
@@ -46,7 +53,7 @@ struct BoardContainerView: View {
         
         VStack {
             BoardContainerView(
-                title: "Your Fleet",
+                title: "Player 1's Fleet",
                 isActive: true,
                 boardSetup: PresetBoardSetups.setups[0],
                 hits: [Position(x: 1, y: 1)],
@@ -55,7 +62,7 @@ struct BoardContainerView: View {
             )
             
             BoardContainerView(
-                title: "Enemy Fleet",
+                title: "Player 2's Fleet",
                 isActive: false,
                 boardSetup: nil,
                 hits: [Position(x: 2, y: 2)],
