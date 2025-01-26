@@ -11,15 +11,15 @@ struct BattlePhaseView: View {
     @EnvironmentObject var gameSession: GameSessionViewModel
     @State private var showingPassDeviceAlert = false
     
-    private var currentPlayer: Player {
+    private var currentPlayerId: UUID {
         if case .battle(let playerId) = gameSession.gameState {
-            return playerId == gameSession.player1.id ? gameSession.player1 : gameSession.player2
+            return playerId
         }
-        return gameSession.player1 // default return для случаев когда не battle фаза
+        return gameSession.player1.id
     }
     
-    private var opponentPlayer: Player {
-        currentPlayer.id == gameSession.player1.id ? gameSession.player2 : gameSession.player1
+    private var currentPlayer: Player {
+        currentPlayerId == gameSession.player1.id ? gameSession.player1 : gameSession.player2
     }
     
     var body: some View {
@@ -52,35 +52,41 @@ struct BattlePhaseView: View {
                 showingPassDeviceAlert = false
             }
         } message: {
-            Text("Pass the device to \(opponentPlayer.name)")
+            Text("Pass the device to \(currentPlayerId == gameSession.player1.id ? gameSession.player2.name : gameSession.player1.name)")
         }
     }
     
     private var boardsContainer: some View {
         Group {
-            // Поле текущего игрока
+            // Player 1's board (always on left/top)
             BoardContainerView(
-                title: "Your Fleet",
-                isActive: false,
-                boardSetup: nil,
-                hits: opponentPlayer.hits,
-                misses: opponentPlayer.misses,
-                mode: .battle
+                title: "Player 1's Fleet",
+                isActive: currentPlayerId == gameSession.player2.id,
+                boardSetup: gameSession.player1.boardSetup,
+                hits: gameSession.player2.hits,
+                misses: gameSession.player2.misses,
+                mode: .battle,
+                onCellTap: currentPlayerId == gameSession.player2.id ? { position in
+                    if gameSession.attack(at: position) {
+                        showingPassDeviceAlert = true
+                    }
+                } : nil
             )
             
-            // Поле противника
+            // Player 2's board (always on right/bottom)
             BoardContainerView(
-                title: "Enemy Fleet",
-                isActive: true,
-                boardSetup: nil,
-                hits: currentPlayer.hits,
-                misses: currentPlayer.misses,
-                mode: .battle
-            ) { position in
-                if gameSession.attack(at: position) {
-                    showingPassDeviceAlert = true
-                }
-            }
+                title: "Player 2's Fleet",
+                isActive: currentPlayerId == gameSession.player1.id,
+                boardSetup: gameSession.player2.boardSetup,
+                hits: gameSession.player1.hits,
+                misses: gameSession.player1.misses,
+                mode: .battle,
+                onCellTap: currentPlayerId == gameSession.player1.id ? { position in
+                    if gameSession.attack(at: position) {
+                        showingPassDeviceAlert = true
+                    }
+                } : nil
+            )
         }
     }
 }
