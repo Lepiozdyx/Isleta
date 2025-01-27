@@ -21,7 +21,7 @@ struct MainMenuView: View {
                     } label: {
                         Image(.rules)
                             .resizable()
-                            .frame(width: 120, height: 120)
+                            .frame(width: 110, height: 110)
                     }
                     .buttonStyle(.borderless)
                     
@@ -32,7 +32,7 @@ struct MainMenuView: View {
                     } label: {
                         Image(.settings)
                             .resizable()
-                            .frame(width: 120, height: 120)
+                            .frame(width: 110, height: 110)
                     }
                     .buttonStyle(.borderless)
                 }
@@ -56,7 +56,7 @@ struct MainMenuView: View {
                     } label: {
                         Image(.pve)
                             .resizable()
-                            .frame(width: 130, height: 120)
+                            .frame(width: 130, height: 110)
                     }
                     .buttonStyle(.borderless)
                 }

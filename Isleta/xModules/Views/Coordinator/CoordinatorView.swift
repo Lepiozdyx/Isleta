@@ -25,20 +25,17 @@ struct CoordinatorView: View {
                             .environmentObject(coordinator)
                             .environmentObject(gameSession)
                     case .ai:
-                        // TODO: Implement AIGameView
-                        Text("AI Game View")
+                        AIGameView()
                             .environmentObject(coordinator)
                             .environmentObject(gameSession)
                     }
                 }
                 
             case .rules:
-                // TODO: Implement RulesView
-                Text("Rules View")
+                RulesView()
                     .environmentObject(coordinator)
                 
             case .settings:
-                // TODO: Implement SettingsView
                 Text("Settings View")
                     .environmentObject(coordinator)
             }

@@ -22,7 +22,7 @@ final class AppCoordinator: ObservableObject {
     }
     
     func startGame(mode: GameMode) {
-        gameSession = GameSessionViewModel()
+        gameSession = GameSessionViewModel(isAIGame: mode == .ai)
         currentScreen = .game(mode)
     }
     

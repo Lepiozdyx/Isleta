@@ -21,16 +21,18 @@ final class GameSessionViewModel: ObservableObject {
     @Published private(set) var currentSetup: BoardSetup?
     
     private var availableSetups: [BoardSetup]
+    private let isAIGame: Bool
     
-    init() {
+    init(isAIGame: Bool = false) {
         let player1Id = UUID()
         let player2Id = UUID()
         
         self.player1 = Player(id: player1Id, name: "Player 1")
-        self.player2 = Player(id: player2Id, name: "Player 2")
+        self.player2 = Player(id: player2Id, name: isAIGame ? "AI" : "Player 2")
         self.gameState = .setup(currentPlayer: player1Id)
         self.availableSetups = PresetBoardSetups.setups
         self.currentSetup = nil
+        self.isAIGame = isAIGame
     }
     
     func restart() {
@@ -38,7 +40,7 @@ final class GameSessionViewModel: ObservableObject {
         let player2Id = UUID()
         
         self.player1 = Player(id: player1Id, name: "Player 1")
-        self.player2 = Player(id: player2Id, name: "Player 2")
+        self.player2 = Player(id: player2Id, name: isAIGame ? "AI" : "Player 2")
         self.gameState = .setup(currentPlayer: player1Id)
         self.availableSetups = PresetBoardSetups.setups
         self.currentSetup = nil
@@ -66,10 +68,18 @@ final class GameSessionViewModel: ObservableObject {
         
         if currentPlayerId == player1.id {
             player1.boardSetup = setup
-            if player2.boardSetup == nil {
-                gameState = .setup(currentPlayer: player2.id)
-            } else {
+            if isAIGame {
+                // В режиме AI сразу устанавливаем расстановку для AI и начинаем игру
+                let aiSetup = AIStrategy.getAISetup(excluding: setup.id)
+                player2.boardSetup = aiSetup
                 gameState = .battle(currentPlayer: player1.id)
+            } else {
+                // В режиме PVP продолжаем как обычно
+                if player2.boardSetup == nil {
+                    gameState = .setup(currentPlayer: player2.id)
+                } else {
+                    gameState = .battle(currentPlayer: player1.id)
+                }
             }
         } else {
             player2.boardSetup = setup
@@ -110,14 +120,26 @@ final class GameSessionViewModel: ObservableObject {
             
             if currentPlayer == player1.id {
                 player1 = updatedPlayer
+                
+                if checkForVictory(attackingPlayer: updatedPlayer, defendingPlayer: defendingPlayer) {
+                    gameState = .finished(winner: updatedPlayer.id)
+                } else if isAIGame {
+                    gameState = .battle(currentPlayer: player2.id)
+                    // Делаем ход AI после небольшой задержки
+                    Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 секунды
+                        makeAIMove()
+                    }
+                } else {
+                    gameState = .battle(currentPlayer: player2.id)
+                }
             } else {
                 player2 = updatedPlayer
-            }
-            
-            if checkForVictory(attackingPlayer: updatedPlayer, defendingPlayer: defendingPlayer) {
-                gameState = .finished(winner: updatedPlayer.id)
-            } else {
-                gameState = .battle(currentPlayer: defendingPlayer.id)
+                if checkForVictory(attackingPlayer: updatedPlayer, defendingPlayer: defendingPlayer) {
+                    gameState = .finished(winner: updatedPlayer.id)
+                } else {
+                    gameState = .battle(currentPlayer: player1.id)
+                }
             }
         } else {
             var updatedPlayer = attackingPlayer
@@ -125,14 +147,35 @@ final class GameSessionViewModel: ObservableObject {
             
             if currentPlayer == player1.id {
                 player1 = updatedPlayer
+                if isAIGame {
+                    gameState = .battle(currentPlayer: player2.id)
+                    // Делаем ход AI после небольшой задержки
+                    Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 секунды
+                        makeAIMove()
+                    }
+                } else {
+                    gameState = .battle(currentPlayer: player2.id)
+                }
             } else {
                 player2 = updatedPlayer
+                gameState = .battle(currentPlayer: player1.id)
             }
-            
-            gameState = .battle(currentPlayer: defendingPlayer.id)
         }
         
         return true
+    }
+    
+    private func makeAIMove() {
+        guard case .battle(let currentPlayer) = gameState,
+              currentPlayer == player2.id,
+              isAIGame else { return }
+        
+        let usedPositions = player2.hits.union(player2.misses)
+        
+        if let aiMove = AIStrategy.nextMove(excluding: usedPositions) {
+            _ = attack(at: aiMove)
+        }
     }
     
     private func checkForVictory(attackingPlayer: Player, defendingPlayer: Player) -> Bool {
