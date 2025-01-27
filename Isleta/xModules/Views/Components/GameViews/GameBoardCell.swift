@@ -22,9 +22,22 @@ struct GameBoardCell: View {
     
     @State private var isAnimating = false
     @State private var scale: CGFloat = 1.0
+    @State private var showLightning = false
     
     var body: some View {
         Button {
+            if mode == .battle {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showLightning = true
+                }
+                
+                // Скрываем молнию через 1 секунду
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showLightning = false
+                    }
+                }
+            }
             onTap?()
         } label: {
             ZStack {
@@ -58,6 +71,16 @@ struct GameBoardCell: View {
                         .scaledToFit()
                         .scaleEffect(isAnimating ? 1.2 : 1.0)
                         .padding(6)
+                }
+                
+                // Молния при атаке
+                if showLightning {
+                    Image(.bolt)
+                        .resizable()
+                        .frame(width: 50, height: 50)
+//                        .scaledToFit()
+//                        .padding(2)
+                        .transition(.opacity)
                 }
             }
             .scaleEffect(scale)

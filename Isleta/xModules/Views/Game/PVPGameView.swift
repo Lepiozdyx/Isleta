@@ -16,12 +16,12 @@ struct PVPGameView: View {
         ZStack {
             switch gameSession.gameState {
             case .setup:
-                SetupPhaseView()
+                SetupPhaseView { coordinator.navigateToMenu() }
                     .transition(.opacity)
                 
             case .battle:
                 if shouldShowBattle {
-                    BattlePhaseView()
+                    BattlePhaseView { coordinator.navigateToMenu() }
                         .transition(.opacity)
                 } else {
                     PVPGameStartView()

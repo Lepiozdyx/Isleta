@@ -10,6 +10,7 @@ import SwiftUI
 struct BattlePhaseView: View {
     @EnvironmentObject var gameSession: GameSessionViewModel
     @State private var showingPassDeviceAlert = false
+    let onExit: () -> ()
     
     private var currentPlayerId: UUID {
         if case .battle(let playerId) = gameSession.gameState {
@@ -28,6 +29,9 @@ struct BattlePhaseView: View {
             
             ZStack {
                 BackgoundView(name: .bg2, isBlur: true)
+                
+                BackButtonView { onExit() }
+                    .padding()
                 
                 VStack {
                     Text("\(currentPlayer.name)'s Turn")
@@ -53,7 +57,7 @@ struct BattlePhaseView: View {
                 showingPassDeviceAlert = false
             }
         } message: {
-            Text("Pass the device to \(currentPlayerId == gameSession.player1.id ? gameSession.player2.name : gameSession.player1.name)")
+            Text("Pass the device to your opponent")
         }
     }
     
@@ -97,6 +101,6 @@ struct BattlePhaseView: View {
 }
 
 #Preview {
-    BattlePhaseView()
+    BattlePhaseView(onExit: {})
         .environmentObject(GameSessionViewModel())
 }

@@ -10,6 +10,7 @@ import SwiftUI
 struct SetupPhaseView: View {
     @EnvironmentObject var gameSession: GameSessionViewModel
     @State private var showingPassDeviceAlert = false
+    let onExit: () -> ()
     
     private var currentPlayer: Player {
         if case .setup(let playerId) = gameSession.gameState {
@@ -29,15 +30,24 @@ struct SetupPhaseView: View {
             ZStack {
                 BackgoundView(name: .bg3, isBlur: true)
                 
+                BackButtonView { onExit() }
+                    .padding()
+                
                 if isLandscape {
                     HStack {
+                        legionsSetup
                         boardPreview
                         setupControls
                     }
                 } else {
                     VStack {
                         boardPreview
-                        setupControls
+                        HStack {
+                            legionsSetup
+                            Spacer()
+                            setupControls
+                        }
+                        .padding(.horizontal)
                     }
                 }
             }
@@ -70,48 +80,41 @@ struct SetupPhaseView: View {
     }
     
     private var setupControls: some View {
-        HStack {
-            legionsSetup
-            .opacity(gameSession.currentSetup == nil ? 1 : 0.5)
-            
-            Spacer()
-            
-            VStack(spacing: 20) {
-                VStack {
-                    Button {
-                        gameSession.nextSetup()
-                    } label: {
-                        Image(.switch)
-                            .resizable()
-                            .frame(width: 80, height: 80)
-                    }
-                    
-                    Text("Generate")
-                        .font(.system(size: 17, weight: .bold))
-                        .foregroundStyle(.yellow)
-                        .shadow(color: .purple, radius: 1, x: 1, y: 1)
-                }
-                
+        VStack(spacing: 20) {
+            VStack {
                 Button {
-                    // Сначала меняем состояние
-                    gameSession.confirmCurrentSetup()
-                    // Проверяем, всё ещё ли мы в фазе setup
-                    if case .setup = gameSession.gameState {
-                        showingPassDeviceAlert = true
-                    }
+                    gameSession.nextSetup()
                 } label: {
-                    Image(.quadButton)
+                    Image(.switch)
                         .resizable()
                         .frame(width: 80, height: 80)
-                        .overlay {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 30, weight: .bold))
-                                .foregroundStyle(.green)
-                        }
                 }
-                .opacity(gameSession.currentSetup == nil ? 0.5 : 1)
-                .disabled(gameSession.currentSetup == nil)
+                
+                Text("Generate")
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundStyle(.yellow)
+                    .shadow(color: .purple, radius: 1, x: 1, y: 1)
             }
+            
+            Button {
+                // Сначала меняем состояние
+                gameSession.confirmCurrentSetup()
+                // Проверяем, всё ещё ли мы в фазе setup
+                if case .setup = gameSession.gameState {
+                    showingPassDeviceAlert = true
+                }
+            } label: {
+                Image(.quadButton)
+                    .resizable()
+                    .frame(width: 80, height: 80)
+                    .overlay {
+                        Image(.arrow)
+                            .resizable()
+                            .scaledToFit()
+                    }
+            }
+            .opacity(gameSession.currentSetup == nil ? 0.5 : 1)
+            .disabled(gameSession.currentSetup == nil)
         }
         .padding()
     }
@@ -158,10 +161,12 @@ struct SetupPhaseView: View {
                     .shadow(color: .purple, radius: 1, x: 1, y: 1)
             }
         }
+        .opacity(gameSession.currentSetup == nil ? 1 : 0.5)
+        .padding()
     }
 }
 
 #Preview {
-    SetupPhaseView()
+    SetupPhaseView(onExit: {})
         .environmentObject(GameSessionViewModel())
 }
