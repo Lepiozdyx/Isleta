@@ -35,7 +35,6 @@ struct GameBoardCell: View {
                     showLightning = true
                 }
                 
-                // Скрываем молнию через 1 секунду
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         showLightning = false
@@ -45,13 +44,11 @@ struct GameBoardCell: View {
             onTap?()
         } label: {
             ZStack {
-                // Базовая ячейка
                 Rectangle()
                     .foregroundStyle(.yellow.opacity(0.1))
                     .border(.yellow, width: 2)
                     .shadow(color: .black, radius: 1, x: 1, y: 1)
                 
-                // Легион (показываем только в режиме setup)
                 if case .legion(let type) = state, mode == .setup {
                     Image(type.image)
                         .resizable()
@@ -59,7 +56,6 @@ struct GameBoardCell: View {
                         .padding(4)
                 }
                 
-                // Попадание
                 if isHit {
                     Image(.star)
                         .resizable()
@@ -68,7 +64,6 @@ struct GameBoardCell: View {
                         .padding(4)
                 }
                 
-                // Промах
                 if isMiss {
                     Image(.dot)
                         .resizable()
@@ -77,13 +72,10 @@ struct GameBoardCell: View {
                         .padding(6)
                 }
                 
-                // Молния при атаке
                 if showLightning {
                     Image(.bolt)
                         .resizable()
                         .frame(width: 50, height: 50)
-//                        .scaledToFit()
-//                        .padding(2)
                         .transition(.opacity)
                 }
             }
@@ -98,7 +90,6 @@ struct GameBoardCell: View {
                         scale = 1.1
                     }
                     
-                    // Возвращаем к исходному состоянию
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         withAnimation {
                             isAnimating = false
@@ -109,7 +100,7 @@ struct GameBoardCell: View {
             }
         }
         .buttonStyle(.borderless)
-        .disabled(isHit || isMiss) // В режиме боя блокируем только атакованные ячейки
+        .disabled(isHit || isMiss)
     }
 }
 

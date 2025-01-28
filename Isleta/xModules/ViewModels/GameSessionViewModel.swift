@@ -69,12 +69,12 @@ final class GameSessionViewModel: ObservableObject {
         if currentPlayerId == player1.id {
             player1.boardSetup = setup
             if isAIGame {
-                // В режиме AI сразу устанавливаем расстановку для AI и начинаем игру
+                // In AI mode, immediately set the formation for AI and start the game
                 let aiSetup = AIStrategy.getAISetup(excluding: setup.id)
                 player2.boardSetup = aiSetup
                 gameState = .battle(currentPlayer: player1.id)
             } else {
-                // В режиме PVP продолжаем как обычно
+                // In PVP mode, we continue as usual
                 if player2.boardSetup == nil {
                     gameState = .setup(currentPlayer: player2.id)
                 } else {
@@ -125,9 +125,9 @@ final class GameSessionViewModel: ObservableObject {
                     gameState = .finished(winner: updatedPlayer.id)
                 } else if isAIGame {
                     gameState = .battle(currentPlayer: player2.id)
-                    // Делаем ход AI после небольшой задержки
+                    // Making an AI move after a short delay
                     Task { @MainActor in
-                        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 секунды
+                        try? await Task.sleep(nanoseconds: 500_000_000)
                         makeAIMove()
                     }
                 } else {
@@ -149,9 +149,9 @@ final class GameSessionViewModel: ObservableObject {
                 player1 = updatedPlayer
                 if isAIGame {
                     gameState = .battle(currentPlayer: player2.id)
-                    // Делаем ход AI после небольшой задержки
+
                     Task { @MainActor in
-                        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 секунды
+                        try? await Task.sleep(nanoseconds: 500_000_000)
                         makeAIMove()
                     }
                 } else {
@@ -181,7 +181,7 @@ final class GameSessionViewModel: ObservableObject {
     private func checkForVictory(attackingPlayer: Player, defendingPlayer: Player) -> Bool {
         guard let defenderSetup = defendingPlayer.boardSetup else { return false }
         
-        // Проходим по всем легионам и проверяем, попали ли по всем их позициям
+        // Go through all the legions and check to see if all their positions have been hit
         for legion in defenderSetup.legions {
             if !legion.positions.isSubset(of: attackingPlayer.hits) {
                 return false

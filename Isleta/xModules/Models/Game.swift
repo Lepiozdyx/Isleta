@@ -7,13 +7,11 @@
 
 import Foundation
 
-// Models/Position.swift
 struct Position: Hashable {
     let x: Int
     let y: Int
 }
 
-// Models/CellState.swift
 enum CellState: Equatable {
     case empty
     case legion(LegionType)
@@ -21,7 +19,6 @@ enum CellState: Equatable {
     case miss
 }
 
-// Models/LegionType.swift
 enum LegionType: Int, CaseIterable {
     case large = 5
     case medium = 4
@@ -45,7 +42,6 @@ enum LegionType: Int, CaseIterable {
     }
 }
 
-// Models/Legion.swift
 struct Legion {
     let type: LegionType
     var positions: Set<Position>
@@ -54,14 +50,12 @@ struct Legion {
     }
 }
 
-// Models/BoardSetup.swift
 struct BoardSetup: Identifiable {
     let id: Int
     let legions: [Legion]
     var isAvailable: Bool = true
 }
 
-// Models/Player.swift
 struct Player: Identifiable {
     let id: UUID
     let name: String

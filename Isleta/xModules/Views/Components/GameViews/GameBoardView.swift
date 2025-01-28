@@ -36,7 +36,6 @@ struct GameBoardView: View {
             VStack {
                 Spacer()
                 
-                // Игровое поле
                 LazyVGrid(
                     columns: Array(repeating: GridItem(.fixed(cellSize), spacing: 2), count: columns),
                     spacing: 2
@@ -45,7 +44,6 @@ struct GameBoardView: View {
                         ForEach(0..<columns, id: \.self) { column in
                             let position = Position(x: column, y: row)
                             
-                            // GameBoardCell
                             GameBoardCell(
                                 position: position,
                                 state: stateForPosition(position),
@@ -84,44 +82,3 @@ struct GameBoardView: View {
         )
     }
 }
-
-//struct GameBoardView: View {
-//    let rows = 10
-//    let columns = 10
-//    
-//    var body: some View {
-//        GeometryReader { geometry in
-//            // Вычисляем размеры экрана и размеры ячеек
-//            let availableWidth = geometry.size.width
-//            let availableHeight = geometry.size.height
-//            let boardSize = min(availableWidth, availableHeight) * 0.9 // Учитываем отступы
-//            let cellSize = boardSize / CGFloat(max(rows, columns))
-//            
-//            // Центрируем сетку
-//            VStack {
-//                Spacer()
-//                LazyVGrid(
-//                    columns: Array(repeating: GridItem(.fixed(cellSize), spacing: 2), count: columns),
-//                    spacing: 2
-//                ) {
-//                    ForEach(0..<(rows * columns), id: \.self) { index in
-//                        // GameBoardCell
-//                        Rectangle()
-//                            .foregroundStyle(.yellow)
-//                            .opacity(0.1)
-//                            .frame(width: cellSize, height: cellSize)
-//                            .border(Color.yellow, width: 2)
-//                            .shadow(color: .black, radius: 1, x: 1, y: 1)
-//                    }
-//                }
-//                .frame(width: boardSize, height: boardSize) // Ограничиваем размеры сетки
-//                Spacer()
-//            }
-//            .frame(maxWidth: .infinity, maxHeight: .infinity) // Заполняем доступное пространство
-//        }
-//    }
-//}
-//
-//#Preview {
-//    GameBoardView()
-//}

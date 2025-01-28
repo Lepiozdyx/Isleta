@@ -97,9 +97,8 @@ struct SetupPhaseView: View {
             }
             
             Button {
-                // Сначала меняем состояние
                 gameSession.confirmCurrentSetup()
-                // Проверяем, всё ещё ли мы в фазе setup
+
                 if case .setup = gameSession.gameState {
                     showingPassDeviceAlert = true
                 }

@@ -9,36 +9,34 @@ import Foundation
 
 struct AIStrategy {
     // MARK: - AI Board Setup
-    
-    /// Выбирает случайную расстановку для AI, исключая выбранную игроком
+    /// Selects a random formation for the AI, excluding the player's chosen formation
     static func getAISetup(excluding playerSetupId: Int?) -> BoardSetup {
-        // Получаем все доступные сетапы
+        // Getting all the available sets
         let availableSetups = PresetBoardSetups.setups.filter { setup in
             setup.id != playerSetupId
         }
         
-        // Выбираем случайный сетап из доступных
+        // Choose a random set from the available setups
         let randomIndex = Int.random(in: 0..<availableSetups.count)
         return availableSetups[randomIndex]
     }
     
     // MARK: - AI Attack Pattern
-    
-    /// Предопределенная последовательность ходов AI
+    /// Predefined sequence of moves
     private static let attackPattern: [Position] = {
         var pattern: [Position] = []
         
-        // Диагональный паттерн
+        // Diagonal pattern
         for i in 0..<10 {
             pattern.append(Position(x: i, y: i))
         }
         
-        // Обратная диагональ
+        // Reverse diagonal
         for i in 0..<10 {
             pattern.append(Position(x: i, y: 9 - i))
         }
         
-        // Горизонтальный паттерн
+        // Horizontal pattern
         for y in 0..<10 {
             for x in 0..<10 {
                 let pos = Position(x: x, y: y)
@@ -51,14 +49,14 @@ struct AIStrategy {
         return pattern
     }()
     
-    /// Возвращает следующий ход AI, исключая уже атакованные позиции
+    /// Returns the next AI move, excluding already attacked positions
     static func nextMove(excluding usedPositions: Set<Position>) -> Position? {
         return attackPattern.first { position in
             !usedPositions.contains(position)
         }
     }
     
-    /// Проверяет, доступна ли позиция для атаки
+    /// Checks if the position is available for attack
     static func isValidMove(_ position: Position, excluding usedPositions: Set<Position>) -> Bool {
         return !usedPositions.contains(position)
     }
