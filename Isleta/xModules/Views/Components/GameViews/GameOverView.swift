@@ -12,6 +12,8 @@ struct GameOverView: View {
     @EnvironmentObject var gameSession: GameSessionViewModel
     let winner: Player
     
+    private let hapticManager = HapticManager.shared
+    
     var body: some View {
         ZStack {
             BackgoundView(name: .bg2, isBlur: true)
@@ -28,6 +30,7 @@ struct GameOverView: View {
                             
                         HStack(spacing: 40) {
                             Button {
+                                hapticManager.playMenuFeedback()
                                 gameSession.restart()
                             } label: {
                                 VStack {
@@ -44,6 +47,7 @@ struct GameOverView: View {
                             }
                             
                             Button {
+                                hapticManager.playMenuFeedback()
                                 coordinator.navigateToMenu()
                             } label: {
                                 VStack {
@@ -74,6 +78,9 @@ struct GameOverView: View {
                         }
                         .offset(x: 0, y: -60)
                 }
+        }
+        .onAppear {
+            hapticManager.playGameOverFeedback()
         }
     }
 }

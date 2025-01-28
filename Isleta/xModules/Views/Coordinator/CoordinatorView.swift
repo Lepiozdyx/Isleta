@@ -36,9 +36,12 @@ struct CoordinatorView: View {
                     .environmentObject(coordinator)
                 
             case .settings:
-                Text("Settings View")
+                SettingsView()
                     .environmentObject(coordinator)
             }
+        }
+        .onAppear {
+            AudioManager.shared.playBackgroundMusic()
         }
     }
 }

@@ -9,8 +9,8 @@ import SwiftUI
 
 struct GameBoardCell: View {
     enum DisplayMode {
-        case setup  // Режим расстановки - показываем легионы для текущего игрока
-        case battle // Режим боя - показываем только результаты атак
+        case setup
+        case battle
     }
     
     let position: Position
@@ -24,9 +24,13 @@ struct GameBoardCell: View {
     @State private var scale: CGFloat = 1.0
     @State private var showLightning = false
     
+    private let hapticManager = HapticManager.shared
+    
     var body: some View {
         Button {
             if mode == .battle {
+                hapticManager.playAttackFeedback()
+                
                 withAnimation(.easeInOut(duration: 0.2)) {
                     showLightning = true
                 }

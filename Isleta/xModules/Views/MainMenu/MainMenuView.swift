@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainMenuView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
+    private let hapticManager = HapticManager.shared
     
     var body: some View {
         ZStack {
@@ -17,6 +18,7 @@ struct MainMenuView: View {
             VStack {
                 HStack {
                     Button {
+                        hapticManager.playMenuFeedback()
                         coordinator.showRules()
                     } label: {
                         Image(.rules)
@@ -28,6 +30,7 @@ struct MainMenuView: View {
                     Spacer()
                     
                     Button {
+                        hapticManager.playMenuFeedback()
                         coordinator.showSettings()
                     } label: {
                         Image(.settings)
@@ -41,6 +44,7 @@ struct MainMenuView: View {
                 
                 HStack {
                     Button {
+                        hapticManager.playMenuFeedback()
                         coordinator.startGame(mode: .pvp)
                     } label: {
                         Image(.pvp)
@@ -52,6 +56,7 @@ struct MainMenuView: View {
                     Spacer()
                     
                     Button {
+                        hapticManager.playMenuFeedback()
                         coordinator.startGame(mode: .ai)
                     } label: {
                         Image(.pve)
