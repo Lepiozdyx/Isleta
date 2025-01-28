@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PVPGameStartView: View {
+    @EnvironmentObject var gameSession: GameSessionViewModel
+    
     var body: some View {
         ZStack {
             BackgoundView(name: .bg1, isBlur: false)
@@ -17,9 +19,18 @@ struct PVPGameStartView: View {
                     .resizable()
                     .scaledToFit()
                 
-                Image(.p2Card)
+                Image(gameSession.isAIGame ? .pve : .p2Card)
                     .resizable()
                     .scaledToFit()
+                    .overlay(alignment: .bottom) {
+                        if gameSession.isAIGame {
+                            Text("AI")
+                                .font(.system(size: 36, weight: .heavy, design: .rounded))
+                                .foregroundStyle(.yellow)
+                                .shadow(color: .purple, radius: 1)
+                                .offset(x: 0, y: 20)
+                        }
+                    }
             }
             .padding()
             
@@ -30,6 +41,12 @@ struct PVPGameStartView: View {
     }
 }
 
-#Preview {
+#Preview("PvP Mode") {
     PVPGameStartView()
+        .environmentObject(GameSessionViewModel(isAIGame: false))
+}
+
+#Preview("AI Mode") {
+    PVPGameStartView()
+        .environmentObject(GameSessionViewModel(isAIGame: true))
 }

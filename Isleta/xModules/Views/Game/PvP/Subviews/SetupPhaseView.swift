@@ -104,14 +104,21 @@ struct SetupPhaseView: View {
                     showingPassDeviceAlert = true
                 }
             } label: {
-                Image(.quadButton)
-                    .resizable()
-                    .frame(width: 80, height: 80)
-                    .overlay {
-                        Image(.arrow)
-                            .resizable()
-                            .scaledToFit()
-                    }
+                VStack {
+                    Image(.quadButton)
+                        .resizable()
+                        .frame(width: 80, height: 80)
+                        .overlay {
+                            Image(.arrow)
+                                .resizable()
+                                .scaledToFit()
+                        }
+                    
+                    Text("Next")
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundStyle(.yellow)
+                        .shadow(color: .purple, radius: 1, x: 1, y: 1)
+                }
             }
             .opacity(gameSession.currentSetup == nil ? 0.5 : 1)
             .disabled(gameSession.currentSetup == nil)

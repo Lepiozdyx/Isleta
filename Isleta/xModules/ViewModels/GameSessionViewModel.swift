@@ -21,7 +21,7 @@ final class GameSessionViewModel: ObservableObject {
     @Published private(set) var currentSetup: BoardSetup?
     
     private var availableSetups: [BoardSetup]
-    private let isAIGame: Bool
+    let isAIGame: Bool
     
     init(isAIGame: Bool = false) {
         let player1Id = UUID()
