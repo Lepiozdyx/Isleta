@@ -13,7 +13,7 @@ struct MainMenuView: View {
     
     var body: some View {
         ZStack {
-            BackgroundView(name: .bg)
+            BackgroundView(name: .bg, isBlur: true)
             
             VStack {
                 HStack {
