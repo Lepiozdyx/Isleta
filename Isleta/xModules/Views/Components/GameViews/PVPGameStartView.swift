@@ -12,7 +12,7 @@ struct PVPGameStartView: View {
     
     var body: some View {
         ZStack {
-            BackgoundView(name: .bg1, isBlur: false)
+            BackgroundView(name: .bg1, isBlur: false)
             
             HStack {
                 Image(.p1Card)

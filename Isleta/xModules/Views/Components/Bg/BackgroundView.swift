@@ -1,5 +1,5 @@
 //
-//  BackgoundView.swift
+//  BackgroundView.swift
 //  Isleta
 //
 //  Created by Alex on 23.01.2025.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct BackgoundView: View {
+struct BackgroundView: View {
     let name: ImageResource
     var isBlur = false
     
@@ -20,5 +20,5 @@ struct BackgoundView: View {
 }
 
 #Preview {
-    BackgoundView(name: .bg1)
+    BackgroundView(name: .bg1)
 }

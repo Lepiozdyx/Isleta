@@ -28,7 +28,7 @@ struct SetupPhaseView: View {
             let isLandscape = geometry.size.width > geometry.size.height
             
             ZStack {
-                BackgoundView(name: .bg3, isBlur: true)
+                BackgroundView(name: .bg3, isBlur: true)
                 
                 BackButtonView { onExit() }
                     .padding()
@@ -90,7 +90,7 @@ struct SetupPhaseView: View {
                         .frame(width: 80, height: 80)
                 }
                 
-                Text("Generate")
+                Text("Generate a lineup")
                     .font(.system(size: 17, weight: .bold))
                     .foregroundStyle(.yellow)
                     .shadow(color: .purple, radius: 1, x: 1, y: 1)

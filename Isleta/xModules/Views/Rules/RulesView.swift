@@ -12,7 +12,7 @@ struct RulesView: View {
     
     var body: some View {
         ZStack {
-            BackgoundView(name: .bg3, isBlur: true)
+            BackgroundView(name: .bg3, isBlur: true)
             
             BackButtonView { coordinator.navigateToMenu() }
                 .padding()
@@ -21,7 +21,7 @@ struct RulesView: View {
                 .resizable()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay {
-                    ScrollView(.vertical) {
+                    ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 30) {
                             Image(.underlay)
                                 .resizable()
@@ -63,7 +63,7 @@ struct RulesView: View {
                             }
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 30)
                     .padding(.vertical, 30)
                 }
                 .padding(.top, 80)

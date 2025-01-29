@@ -106,7 +106,7 @@ struct GameBoardCell: View {
 
 #Preview {
     ZStack {
-        BackgoundView(name: .bg2, isBlur: true)
+        BackgroundView(name: .bg2, isBlur: true)
         
         VStack {
             Text("Setup Mode")

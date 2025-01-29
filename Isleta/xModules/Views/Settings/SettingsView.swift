@@ -13,7 +13,7 @@ struct SettingsView: View {
     
     var body: some View {
         ZStack {
-            BackgoundView(name: .bg3, isBlur: true)
+            BackgroundView(name: .bg3, isBlur: true)
             
             BackButtonView { coordinator.navigateToMenu() }
                 .padding()

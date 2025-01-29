@@ -20,7 +20,7 @@ struct GameOverView: View {
     
     var body: some View {
         ZStack {
-            BackgoundView(name: .bg2, isBlur: true)
+            BackgroundView(name: .bg2, isBlur: true)
             
             Image(.bigUnderlay)
                 .resizable()

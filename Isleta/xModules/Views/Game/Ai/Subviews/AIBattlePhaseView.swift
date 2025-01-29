@@ -27,7 +27,7 @@ struct AIBattlePhaseView: View {
             let isLandscape = geometry.size.width > geometry.size.height
             
             ZStack {
-                BackgoundView(name: .bg2, isBlur: true)
+                BackgroundView(name: .bg2, isBlur: true)
                 
                 BackButtonView { onExit() }
                     .padding()

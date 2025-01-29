@@ -49,7 +49,7 @@ struct BoardContainerView: View {
 // MARK: - Preview
 #Preview {
     ZStack {
-        BackgoundView(name: .bg2, isBlur: true)
+        BackgroundView(name: .bg2, isBlur: true)
         
         VStack {
             BoardContainerView(
