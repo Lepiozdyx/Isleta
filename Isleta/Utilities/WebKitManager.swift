@@ -9,52 +9,59 @@
 import SwiftUI
 
 struct WebKitManager: UIViewRepresentable {
-    let url: URL
-    let networkManager: NetworkManager
+    private let url: URL
+    private let networkManager: any NetworkManaging
+    
+    init(url: URL, networkManager: any NetworkManaging) {
+        self.url = url
+        self.networkManager = networkManager
+    }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        Coordinator(parent: self)
     }
     
     func makeUIView(context: Context) -> WKWebView {
-        let configuration = WKWebViewConfiguration()
-        configuration.allowsInlineMediaPlayback = true
-        configuration.mediaTypesRequiringUserActionForPlayback = []
+        let webView = WKWebView(
+            frame: .zero,
+            configuration: WebViewConfiguration.default
+        )
         
-        let preferences = WKWebpagePreferences()
-        preferences.allowsContentJavaScript = true
-        configuration.defaultWebpagePreferences = preferences
-        
-        let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.navigationDelegate = context.coordinator
+        configureWebView(webView, with: context.coordinator)
+        return webView
+    }
+    
+    func updateUIView(_ webView: WKWebView, context: Context) {
+        webView.load(URLRequest(url: url))
+    }
+}
+
+// MARK: - WebKitManager Configuration
+private extension WebKitManager {
+    func configureWebView(_ webView: WKWebView, with coordinator: Coordinator) {
+        webView.navigationDelegate = coordinator
         webView.allowsBackForwardNavigationGestures = true
         webView.allowsLinkPreview = true
         webView.scrollView.showsHorizontalScrollIndicator = false
         webView.scrollView.bounces = true
         webView.customUserAgent = networkManager.getUserAgent(forWebView: true)
-        
-        return webView
     }
-    
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        let request = URLRequest(url: url)
-        webView.load(request)
-    }
-    
-    class Coordinator: NSObject, WKNavigationDelegate {
-        var parent: WebKitManager
+}
+
+// MARK: - WebKitManager Coordinator
+extension WebKitManager {
+    final class Coordinator: NSObject, WKNavigationDelegate {
+        private let parent: WebKitManager
         
-        init(_ parent: WebKitManager) {
+        init(parent: WebKitManager) {
             self.parent = parent
             super.init()
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            guard let finalURL = webView.url else {
-                return
-            }
+            guard let finalURL = webView.url else { return }
             
-            if finalURL != NetworkManager.url {
+            if finalURL != NetworkManager.targetURL {
                 parent.networkManager.proveURL(finalURL)
             }
         }
@@ -70,5 +77,20 @@ struct WebKitManager: UIViewRepresentable {
             didFailProvisionalNavigation navigation: WKNavigation!,
             withError error: Error
         ) {}
+    }
+}
+
+// MARK: - WebView Configuration
+private enum WebViewConfiguration {
+    static var `default`: WKWebViewConfiguration {
+        let configuration = WKWebViewConfiguration()
+        configuration.allowsInlineMediaPlayback = true
+        configuration.mediaTypesRequiringUserActionForPlayback = []
+        
+        let preferences = WKWebpagePreferences()
+        preferences.allowsContentJavaScript = true
+        configuration.defaultWebpagePreferences = preferences
+        
+        return configuration
     }
 }
